@@ -1,0 +1,6 @@
+idle constantForceTest.py &
+idle forceSensorTest.py &
+idle sensesTest.py &
+idle Arm.py &
+idle Senses.py &
+
