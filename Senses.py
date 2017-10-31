@@ -146,6 +146,8 @@ class Senses:
                 mask2 = cv2.inRange(hsv[y:y+h, x:x+w], low, high)
             else:
                 mask2 = cv2.inRange(hsv[y:y+h, x:x+w], self.iLower, self.iUpper)
+            if mask2 is None:
+                continue
             # Generate mask of segment in cropped image
             armMask2 = np.zeros(mask2.shape, dtype=np.uint8)
             armContourTranslated = self.translate(armContour, -x, -y)

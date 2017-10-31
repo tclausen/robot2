@@ -7,29 +7,38 @@ from threading import Thread
 from Senses import *
 from Motor import *
 
-m1 = Motor(8, 1)
+m1 = Motor(8, 1, 365)
 m1.name = "m1"
-m1.setTarget(100)
+m1.setTarget(150)
 
-m2 = Motor(9, 0)
+m2 = Motor(9, 0, 365)
 m2.name = "m2"
-m2.setTarget(100)
+m2.setTarget(150)
 
 runControlLoop = True
 
 def controlLoop():
     global runControlLoop
+    global m1
+    global m2
     tp = time.time()
     time.sleep(0.01)
-    while runControlLoop:
-        t = time.time()
-        dt = t - tp 
-
-        #m1.update(dt)
-        #m2.update(dt)
+    try:
+        while runControlLoop:
+            t = time.time()
+            dt = t - tp 
     
-        time.sleep(0.01)
-        tp = t
+            m1.update(dt)
+            m2.update(dt)
+    
+            time.sleep(0.01)
+            tp = t
+        m1.setNeutral()
+        m2.setNeutral()
+    except:
+        print "Unexpected error:", sys.exc_info()[0]
+        m1.setNeutral()
+        m2.setNeutral()
 
 thread = Thread(target = controlLoop, args = [])
 thread.start()
@@ -72,7 +81,7 @@ try:
         #e1p = e1
         tp = t
                 
-except KeyboardInterrupt:
+except:
     # quit
     print "quit"
     runControlLoop = False

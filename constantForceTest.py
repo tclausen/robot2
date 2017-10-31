@@ -56,11 +56,11 @@ class Motor:
         self.move(correction)
         self.ep = e
 
-m1 = Motor(8, 1)
+m1 = Motor(8, 0)
 m1.name = "m1"
 m1.setTarget(100)
 
-m2 = Motor(9, 0)
+m2 = Motor(9, 1)
 m2.name = "m2"
 m2.setTarget(100)
 
