@@ -56,7 +56,7 @@ class Arm:
                 cv2.putText(frame, "%6.3f" % (segment.angle), segment.p, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (50,255,50), 2, cv2.LINE_AA)
 
     # Segments must be sorted before calling this
-    def findAngles(self, movedPrevious2):
+    def findAngles(self):
         previousPoint = self.origin
         n = 0
         for segment in self.segments:

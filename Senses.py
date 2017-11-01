@@ -6,6 +6,7 @@ import time
 import cv2
 
 from Arm import *
+from Log import *
 
 #assign strings for ease of coding
 hh='Hue High'
@@ -39,6 +40,7 @@ class Senses:
         #self.oUpper = (120, 255, 255)
         #self.iLower = (120, 0, 0)
         #self.iUpper = (255, 255, 255)
+        self.log = Log("s")
         
     def showTrackbars(self, lower, upper):
         cv2.namedWindow('Colorbars') 
@@ -109,7 +111,7 @@ class Senses:
             p[1] = p[1] + dy
         return c
             
-    def findArm(self, frame, nArms, movedPrevious2):
+    def findArm(self, frame, nArms):
         startTime = time.time()
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         mask = None
@@ -171,9 +173,18 @@ class Senses:
         arm.sortSegments()
 
         # Segments must be sorted before running this
-        arm.findAngles(movedPrevious2)
+        arm.findAngles()
         arm.writeSegmentNumbers(frame)
         arm.drawSegments(frame)
+        
+        if len(arm.segments) > 0:
+            positionsText = ""
+            for s in arm.segments:
+                positionsText = positionsText + " %f" % (s.angle)
+        
+            self.log.log("%f %s" %(startTime, positionsText))
+        else:
+            self.log.log("")
 
         endTime = time.time()
         cv2.putText(frame, "Process time: %7.4f s" % (endTime-startTime), (10,15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 1, cv2.LINE_AA)
