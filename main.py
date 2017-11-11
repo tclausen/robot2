@@ -9,13 +9,13 @@ from JointController import *
 
 jointController = JointController()
 
-thread = Thread(target = motorController.controlLoop, args = [])
+thread = Thread(target = jointController.controlLoop, args = [])
 thread.start()
 
 s = Senses()
 
-target1_1 = 10
-target1_2 = -10
+target1_1 = 0
+target1_2 = 0
 
 target1 = target1_1
 
@@ -28,9 +28,12 @@ try:
         (f, t) = Senses.getFrame()
         arm = s.findArm(f, 1)
         Senses.showFrame(f)
-
+       
         if len(arm.segments) == 0 or arm.segments[0].p == None:
             continue
+
+        jointController.setAngle(arm.segments[0].angle, t)
+
         if t-t0 > 5:
             target1 = target1_2
         if t-t0 > 10:

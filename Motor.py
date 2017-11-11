@@ -8,6 +8,7 @@ import Adafruit_GPIO.SPI as SPI
 import Adafruit_MCP3008
 
 from Log import *
+from Pid import *
 
 pwm = Adafruit_PCA9685.PCA9685()
 # Set frequency to 60hz, good for servos.
@@ -37,13 +38,12 @@ class Motor:
         self.neutral = neutral
         self._targetForce = 0
         self.name = name
-        self.targetForceMin = 100
+        self.targetForceMin = 10
         self.targetForceMax = 800
-
-        self.ep = 0
-        self.totalError = 0
         
-        self.log = Log("m_"+self.name)
+        self.pid = Pid(0.02, 0, 0)
+        
+        self.log = Log(time.time(), "m_"+self.name)
 
     def setNeutral(self):
         self.move(0)
@@ -66,17 +66,12 @@ class Motor:
     def update(self, dt):
         f = self.force()
         e = self._targetForce - f
-        # P term
-        p = -0.05 * e
-        # D term
-        d = 0.009 * (self.ep-e)/dt
-        # I term
-        self.totalError = self.totalError + e*dt
-        i = 0.0 * self.totalError
-        i = 0
         
-        #print "%s, f: %6.2f, p: %6.2f, d: %6.2f, i: %6.2f, total: %3i" % (self.name, f, p, d, i, int(p + d + i))
-        correction = int(p + d + i)
-        self.log.log("%f %f %f %i" % (time.time(), f, self.targetForce, correction))
+        #~ if f < 2:
+            #~ self.move(0)
+            #~ return
+            
+        correction = self.pid.f(e, dt)
+        self.log.logt(time.time(), "%f %f %i" % (f, self._targetForce, correction))
         self.move(correction)
         self.ep = e

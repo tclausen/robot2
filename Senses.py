@@ -40,7 +40,7 @@ class Senses:
         #self.oUpper = (120, 255, 255)
         #self.iLower = (120, 0, 0)
         #self.iUpper = (255, 255, 255)
-        self.log = Log("s")
+        self.log = Log(time.time(), "s")
         
     def showTrackbars(self, lower, upper):
         cv2.namedWindow('Colorbars') 
