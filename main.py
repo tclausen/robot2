@@ -14,7 +14,7 @@ thread.start()
 
 s = Senses()
 
-target1_1 = 0
+target1_1 = 0 
 target1_2 = 0
 
 target1 = target1_1
@@ -28,7 +28,7 @@ try:
         (f, t) = Senses.getFrame()
         arm = s.findArm(f, 1)
         Senses.showFrame(f)
-       
+
         if len(arm.segments) == 0 or arm.segments[0].p == None:
             continue
 
@@ -40,7 +40,7 @@ try:
             target1 = target1_1
             t0 = t
         tp = t
-               
+
 except (SystemExit, KeyboardInterrupt) as e:
     # quit
     print "quit"

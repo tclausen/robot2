@@ -17,10 +17,6 @@ pwm.set_pwm_freq(60)
 #spi = spidev.SpiDev()
 #spi.open(0, 0)
 
-
-targetForce = 100
-neutral = 366
-
 def readadc(adcnum):
     r = spi.xfer2([1, 8 + adcnum << 4, 0])
     data = ((r[1] & 3) << 8) + r[2]
@@ -38,10 +34,11 @@ class Motor:
         self.neutral = neutral
         self._targetForce = 0
         self.name = name
-        self.targetForceMin = 10
-        self.targetForceMax = 800
+        self.targetForceMin = 20
+        self.targetForceMax = 900
+        self.ep = -200
         
-        self.pid = Pid(0.02, 0, 0)
+        self.pid = Pid(0.02, 0, 0.000)
         
         self.log = Log(time.time(), "m_"+self.name)
 
@@ -62,15 +59,15 @@ class Motor:
     def move(self, v):
         #print "Correction: ", self.name, v
         pwm.set_pwm(self.channel, 0, self.neutral + v)
+        pass
 
+    def fError(self):
+        return self.ep
+        
     def update(self, dt):
         f = self.force()
         e = self._targetForce - f
-        
-        #~ if f < 2:
-            #~ self.move(0)
-            #~ return
-            
+                    
         correction = self.pid.f(e, dt)
         self.log.logt(time.time(), "%f %f %i" % (f, self._targetForce, correction))
         self.move(correction)
